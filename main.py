@@ -1,3 +1,4 @@
+from unittest import result
 import cv2 as cv
 import pyautogui
 import numpy as np
@@ -75,8 +76,10 @@ def Recording(screen_x, screen_y):
 def Replaying(tmp_video, frame_delay):
 
     print('--- Replaying')
+    text = 'Replay'
     
     for frame in tmp_video:
+        cv.putText(frame, text, (10, 40), cv.FONT_HERSHEY_SIMPLEX, 1.5, (0, 0, 255), 2, cv.LINE_AA)
         cv.imshow("Replay", frame)
         cv.waitKey(frame_delay)
         if keyboard.is_pressed('ctrl'):
@@ -87,8 +90,10 @@ def Replaying(tmp_video, frame_delay):
 
 
 def Saving(tmp_video, frame_delay, screen_x, screen_y):
+    result = time.localtime()
+    file_name = str(result.tm_year) +'_'+ str(result.tm_mon) +'_'+ str(result.tm_mday) +'_'+ str(result.tm_hour) +'_'+ str(result.tm_min) +'_'+ str(result.tm_sec) + '.avi'
     fourcc = cv.VideoWriter_fourcc(*'XVID')
-    video = cv.VideoWriter('test.avi', fourcc, 25, (screen_x, screen_y))
+    video = cv.VideoWriter(file_name, fourcc, 25, (screen_x, screen_y))
     for frame in tmp_video:
         video.write(frame)
 

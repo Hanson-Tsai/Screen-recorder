@@ -1,3 +1,4 @@
+from ctypes import sizeof
 from unittest import result
 import cv2 as cv
 import pyautogui
@@ -44,11 +45,13 @@ def Recording(screen_x, screen_y):
     print("--- Recording")
     tmp_video = []
     frame_number = 0
+    frame_delay = []
 
 
-    time_start = time.time()
+    
     while True:
         #click screen shot
+        time_start = time.time()
         screen_shot_img = pyautogui.screenshot()
 
         #convert into array
@@ -61,27 +64,30 @@ def Recording(screen_x, screen_y):
 
         if keyboard.is_pressed('ctrl'):
             break
-    time_end = time.time()
+        time_end = time.time()
+        frame_delay.append(round(1/(time_end - time_start)))
+    
 
     print('--- End Recording')
     cv.destroyAllWindows()
-
-    frame_delay = round(frame_number / (time_end - time_start))
-    #print(frame_delay)
 
     return tmp_video, frame_delay
 
 
 
 def Replaying(tmp_video, frame_delay):
-
+    print(frame_delay)
     print('--- Replaying')
     text = 'Replay'
-    
+    i = 0
+
     for frame in tmp_video:
         cv.putText(frame, text, (10, 40), cv.FONT_HERSHEY_SIMPLEX, 1.5, (0, 0, 255), 2, cv.LINE_AA)
         cv.imshow("Replay", frame)
-        cv.waitKey(frame_delay)
+        cv.waitKey(int(frame_delay[i]))
+        i = i + 1
+        if i > len(frame_delay) - 1:
+            break
         if keyboard.is_pressed('ctrl'):
             break
     
@@ -93,7 +99,7 @@ def Saving(tmp_video, frame_delay, screen_x, screen_y):
     result = time.localtime()
     file_name = str(result.tm_year) +'_'+ str(result.tm_mon) +'_'+ str(result.tm_mday) +'_'+ str(result.tm_hour) +'_'+ str(result.tm_min) +'_'+ str(result.tm_sec) + '.avi'
     fourcc = cv.VideoWriter_fourcc(*'XVID')
-    video = cv.VideoWriter(file_name, fourcc, 25, (screen_x, screen_y))
+    video = cv.VideoWriter(file_name, fourcc, round(sum(frame_delay)/len(frame_delay)), (screen_x, screen_y))
     for frame in tmp_video:
         video.write(frame)
 

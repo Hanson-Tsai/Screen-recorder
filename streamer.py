@@ -1,6 +1,3 @@
-from email.policy import default
-from cv2 import LineSegmentDetector
-from matplotlib.pyplot import text
 from vidstream import *
 import tkinter as tk
 import socket

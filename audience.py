@@ -315,17 +315,24 @@ class DelayReceiver:
 '''
 
 # Function
-server = StreamingServer(default_ip_address, 12600)
-receiver = AudioReceiver(default_ip_address, 12800)
+server_gamer = StreamingServer(default_ip_address, 12200)
+receiver_gamer = AudioReceiver(default_ip_address, 12400)
+server_streamer = StreamingServer(default_ip_address, 12600)
+receiver_streamer = AudioReceiver(default_ip_address, 12800)
 #delay_check = DelayReceiver(default_ip_address, 12400)
 
 def start_listening():
-    t1 = threading.Thread(target=server.start_server)
-    t2 = threading.Thread(target=receiver.start_server)
-    #t3 = threading.Thread(target=delay_check.start_server)
+    t1 = threading.Thread(target=server_gamer.start_server)
+    t2 = threading.Thread(target=receiver_gamer.start_server)
+    t3 = threading.Thread(target=server_streamer.start_server)
+    t4 = threading.Thread(target=receiver_streamer.start_server)
+    #t5 = threading.Thread(target=delay_check.start_server)
+
     t1.start()
     t2.start()
-    #t3.start()
+    t3.start()
+    t4.start()
+    #t5.start()
 
 
 # GUI

@@ -22,17 +22,17 @@ def start_listening():
     t2.start()
 
 def start_camera_stream():
-    camera_client = CameraClient(text_audience_ip.get(1.0, 'end-1c'), 12600)
+    camera_client = CameraClient(text_audience_ip.get(1.0, 'end-1c'), 12200)
     t3 = threading.Thread(target=camera_client.start_stream)
     t3.start()
 
 def start_screen_sharing():
-    screen_client = ScreenShareClient(text_audience_ip.get(1.0, 'end-1c'), 12600)
+    screen_client = ScreenShareClient(text_audience_ip.get(1.0, 'end-1c'), 12200)
     t4 = threading.Thread(target=screen_client.start_stream)
     t4.start()
 
 def start_audio_stream():
-    audio_sender = AudioSender(text_audience_ip.get(1.0, 'end-1c'), 12800)
+    audio_sender = AudioSender(text_audience_ip.get(1.0, 'end-1c'), 12400)
     t5 = threading.Thread(target=audio_sender.start_stream)
     t5.start()
 

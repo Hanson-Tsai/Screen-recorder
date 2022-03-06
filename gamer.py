@@ -8,12 +8,15 @@ import numpy as np
 import pickle
 import struct
 import pyaudio
+import time
 
 # IP mode
 default_ip_address = socket.gethostbyname(socket.gethostname())    #local-ip
 #default_ip_address = requests.get('https://api.ipify.org').text  #public-ip
 print("Default IP :", default_ip_address)
 
+# Ping Test
+ping_flag = True
 
 
 class StreamingClient:
@@ -400,19 +403,43 @@ def start_camera_stream():
     camera_client = CameraClient(text_streamer_ip.get(1.0, 'end-1c'), text_audience_ip.get(1.0, 'end-1c'), 10600, 12600)
     t1 = threading.Thread(target=camera_client.start_stream)
     t1.start()
+    if ping_flag:
+        t = threading.Thread(target=ping_host, args=(text_audience_ip.get(1.0, 'end-1c'),))
+        t.start()
 
 def start_screen_sharing():
     screen_client = ScreenShareClient(text_streamer_ip.get(1.0, 'end-1c'), text_audience_ip.get(1.0, 'end-1c'), 10600, 12600)
     t2 = threading.Thread(target=screen_client.start_stream)
     t2.start()
+    if ping_flag:
+        t = threading.Thread(target=ping_host, args=(text_audience_ip.get(1.0, 'end-1c'),))
+        t.start()
 
 def start_audio_stream():
     audio_sender = AudioSender(text_streamer_ip.get(1.0, 'end-1c'), text_audience_ip.get(1.0, 'end-1c'), 10800, 12800)
     #audio_sender = AudioSender(text_audience_ip.get(1.0, 'end-1c'), 12800)
     t3 = threading.Thread(target=audio_sender.start_stream)
     t3.start()
+    if ping_flag:
+        t = threading.Thread(target=ping_host, args=(text_audience_ip.get(1.0, 'end-1c'),))
+        t.start()
 
 
+# Delay check
+from ping3 import ping
+
+def ping_host(ip):
+    ping_flag = False
+    ip_address = ip
+    for i in range(1,10):
+        response = ping(ip_address)
+        if response is not None:
+            delay = int(response * 1000)
+            print('Delay To Audience :', delay)
+            time.sleep(1)
+            # 下面兩行新增的
+    ping_flag = True
+    
 
 receiver = AudioReceiver(default_ip_address, 8888)
 

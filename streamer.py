@@ -10,6 +10,7 @@ import pyautogui
 import numpy as np
 import pickle
 import struct
+from PIL import Image, ImageTk
 
 # IP mode
 default_ip_address = socket.gethostbyname(socket.gethostname())    #local-ip
@@ -177,6 +178,12 @@ class StreamingServer:
 
             frame = pickle.loads(frame_data, fix_imports=True, encoding="bytes")
             frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
+            '''
+            im_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+            im_pil = Image.fromarray(im_rgb)
+            imgTK = ImageTk.PhotoImage(image=im_pil)
+            video_container.configure(image=imgTK)
+            '''
             cv2.imshow(str(address), frame)
             if cv2.waitKey(1) == ord(self.__quit_key):
                 connection.close()
@@ -639,27 +646,59 @@ def ping_host(ip):
             # 下面兩行新增的
     ping_flag = True
 
+def define_layout(obj, cols=1, rows=1):
+    
+    def method(trg, col, row):
+        
+        for c in range(cols):    
+            trg.columnconfigure(c, weight=1)
+        for r in range(rows):
+            trg.rowconfigure(r, weight=1)
+
+    if type(obj)==list:        
+        [ method(trg, cols, rows) for trg in obj ]
+    else:
+        trg = obj
+        method(trg, cols, rows)
+
 # GUI
 window = tk.Tk()
 window.title("賽評場地")
-window.geometry('300x200')
+align_mode = 'nswe'
+pad = 5
 
-label_audience_ip = tk.Label(window, text='Audience IP:')
-label_audience_ip.pack()
+div1 = tk.Frame(window,  width=1200 , height=200)
+div2 = tk.Frame(window,  width=1200 , height=200)
+#div3 = tk.Frame(window,  width=1200 , height=600)
 
-text_audience_ip = tk.Text(window, height=1)
-text_audience_ip.pack()
+window.update()
+win_size = min( window.winfo_width(), window.winfo_height())
 
-btn_listen = tk.Button(window, text="Start Listening", width=50, command=start_listening)
-btn_listen.pack(anchor=tk.CENTER, expand=True)
+div1.grid(column=0, row=0, padx=pad, pady=pad)
+div2.grid(column=0, row=1, padx=pad, pady=pad)
+#div3.grid(column=0, row=2, padx=pad, pady=pad)
+define_layout(window, cols=1, rows=2)
+define_layout([div1, div2])
 
-btn_camera = tk.Button(window, text="Start Camera Stream", width=50, command=start_camera_stream)
-btn_camera.pack(anchor=tk.CENTER, expand=True)
+label_audience_ip = tk.Label(div1, text='Audience IP:')
+text_audience_ip = tk.Text(div1, height=1)
+label_audience_ip.grid(column=0, row=0, sticky=align_mode)
+text_audience_ip.grid(column=1, row=0, sticky=align_mode)
 
-btn_screen = tk.Button(window, text="Start Screen Sharing", width=50, command=start_screen_sharing)
-btn_screen.pack(anchor=tk.CENTER, expand=True)
 
-btn_audio = tk.Button(window, text="Start Audio Stream", width=50, command=start_audio_stream)
-btn_audio.pack(anchor=tk.CENTER, expand=True)
+btn_listen = tk.Button(div2, text="Start Listening", width=22, command=start_listening)
+btn_camera = tk.Button(div2, text="Camera Stream", width=22, command=start_camera_stream)
+btn_screen = tk.Button(div2, text="Screen Sharing", width=22, command=start_screen_sharing)
+btn_audio = tk.Button(div2, text="Audio Stream", width=22, command=start_audio_stream)
+btn_listen.grid(column=0, row=0)
+btn_camera.grid(column=1, row=0)
+btn_screen.grid(column=2, row=0)
+btn_audio.grid(column=3, row=0)
+
+#video_container = tk.Label(div3)
+#video_container.grid()
 
 window.mainloop()
+
+server.stop_server()
+receiver.stop_server()

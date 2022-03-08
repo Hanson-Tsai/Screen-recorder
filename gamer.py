@@ -439,6 +439,21 @@ def ping_host(ip):
             time.sleep(1)
             # 下面兩行新增的
     ping_flag = True
+
+def define_layout(obj, cols=1, rows=1):
+    
+    def method(trg, col, row):
+        
+        for c in range(cols):    
+            trg.columnconfigure(c, weight=1)
+        for r in range(rows):
+            trg.rowconfigure(r, weight=1)
+
+    if type(obj)==list:        
+        [ method(trg, cols, rows) for trg in obj ]
+    else:
+        trg = obj
+        method(trg, cols, rows)
     
 
 receiver = AudioReceiver(default_ip_address, 8888)
@@ -446,27 +461,42 @@ receiver = AudioReceiver(default_ip_address, 8888)
 # GUI
 window = tk.Tk()
 window.title("比賽場地")
-window.geometry('300x200')
+align_mode = 'nswe'
+pad = 5
 
-label_streamer_ip = tk.Label(window, text='Streamer IP:')
-label_streamer_ip.pack()
+div1 = tk.Frame(window,  width=1200 , height=200)
+div2 = tk.Frame(window,  width=1200 , height=200)
+div3 = tk.Frame(window,  width=1200 , height=200)
 
-text_streamer_ip = tk.Text(window, height=1)
-text_streamer_ip.pack()
+window.update()
+win_size = min( window.winfo_width(), window.winfo_height())
 
-label_audience_ip = tk.Label(window, text='Audience IP:')
-label_audience_ip.pack()
+div1.grid(column=0, row=0, padx=pad, pady=pad)
+div2.grid(column=0, row=1, padx=pad, pady=pad)
+div3.grid(column=0, row=2, padx=pad, pady=pad)
+define_layout(window, cols=1, rows=3)
+define_layout([div1, div2, div3])
 
-text_audience_ip = tk.Text(window, height=1)
-text_audience_ip.pack()
+label_streamer_ip = tk.Label(div1, text='Streamer IP:')
+text_streamer_ip = tk.Text(div1, height=1)
+label_streamer_ip.grid(column=0, row=0, sticky=align_mode)
+text_streamer_ip.grid(column=1, row=0, sticky=align_mode)
 
-btn_camera = tk.Button(window, text="Start Camera Stream", width=50, command=start_camera_stream)
-btn_camera.pack(anchor=tk.CENTER, expand=True)
 
-btn_screen = tk.Button(window, text="Start Screen Sharing", width=50, command=start_screen_sharing)
-btn_screen.pack(anchor=tk.CENTER, expand=True)
+label_audience_ip = tk.Label(div2, text='Audience IP:')
+text_audience_ip = tk.Text(div2, height=1)
+label_audience_ip.grid(column=0, row=0, sticky=align_mode)
+text_audience_ip.grid(column=1, row=0, sticky=align_mode)
 
-btn_audio = tk.Button(window, text="Start Audio Stream", width=50, command=start_audio_stream)
-btn_audio.pack(anchor=tk.CENTER, expand=True)
+
+btn_camera = tk.Button(div3, text="Camera Stream", width=30, command=start_camera_stream)
+btn_screen = tk.Button(div3, text="Screen Sharing", width=30, command=start_screen_sharing)
+btn_audio = tk.Button(div3, text="Audio Stream", width=30, command=start_audio_stream)
+btn_camera.grid(column=0, row=0, sticky=align_mode)
+btn_screen.grid(column=1, row=0, sticky=align_mode)
+btn_audio.grid(column=2, row=0, sticky=align_mode)
+
 
 window.mainloop()
+
+receiver.stop_server()

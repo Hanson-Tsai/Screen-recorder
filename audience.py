@@ -10,6 +10,7 @@ import numpy as np
 import pickle
 import struct
 import time
+import tkinter.font as font
 
 # IP mode
 default_ip_address = socket.gethostbyname(socket.gethostname())    #local-ip
@@ -344,3 +345,9 @@ btn_listen = tk.Button(window, text="Start Listening", width=50, command=start_l
 btn_listen.pack(anchor=tk.CENTER, expand=True)
 
 window.mainloop()
+
+
+server_gamer.stop_server()
+receiver_gamer.stop_server()
+server_streamer.stop_server()
+receiver_streamer.stop_server()

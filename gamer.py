@@ -72,8 +72,8 @@ class StreamingClient:
         self.__port2 = port2
         self._configure()
         self.__running = False
-        self.__client_socket1 = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
-        self.__client_socket2 = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+        self.__client_socket1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.__client_socket2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def _configure(self):
         """
@@ -298,7 +298,7 @@ class AudioReceiver:
 
         self.__audio = pyaudio.PyAudio()
 
-        self.__server_socket = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+        self.__server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__server_socket.bind((self.__host, self.__port))
 
         self.__block = threading.Lock()
@@ -338,7 +338,7 @@ class AudioReceiver:
     def stop_server(self):
         if self.__running:
             self.__running = False
-            closing_connection = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+            closing_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             closing_connection.connect((self.__host, self.__port))
             closing_connection.close()
             self.__block.acquire()
@@ -362,8 +362,8 @@ class AudioSender:
         self.__rate = rate
         self.__frame_chunk = frame_chunk
 
-        self.__sending_socket1 = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
-        self.__sending_socket2 = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+        self.__sending_socket1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.__sending_socket2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__audio = pyaudio.PyAudio()
 
         self.__running = False

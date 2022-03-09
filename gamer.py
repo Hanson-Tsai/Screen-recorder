@@ -9,9 +9,18 @@ import pickle
 import struct
 import pyaudio
 import time
+import sys
+
+'''
+if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        print('no argument')
+        sys.exit()
+    default_ip_address = sys.argv[1]
+'''
 
 # IP mode
-default_ip_address = socket.gethostbyname(socket.gethostname())    #local-ip
+default_ip_address = 'fe80::4d53:751:964:f0af%19'#socket.gethostbyname(socket.gethostname())    #local-ip
 #default_ip_address = requests.get('https://api.ipify.org').text  #public-ip
 print("Default IP :", default_ip_address)
 
@@ -63,8 +72,8 @@ class StreamingClient:
         self.__port2 = port2
         self._configure()
         self.__running = False
-        self.__client_socket1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.__client_socket2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.__client_socket1 = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+        self.__client_socket2 = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
 
     def _configure(self):
         """
@@ -289,7 +298,7 @@ class AudioReceiver:
 
         self.__audio = pyaudio.PyAudio()
 
-        self.__server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.__server_socket = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
         self.__server_socket.bind((self.__host, self.__port))
 
         self.__block = threading.Lock()
@@ -329,7 +338,7 @@ class AudioReceiver:
     def stop_server(self):
         if self.__running:
             self.__running = False
-            closing_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            closing_connection = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
             closing_connection.connect((self.__host, self.__port))
             closing_connection.close()
             self.__block.acquire()
@@ -353,8 +362,8 @@ class AudioSender:
         self.__rate = rate
         self.__frame_chunk = frame_chunk
 
-        self.__sending_socket1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.__sending_socket2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.__sending_socket1 = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+        self.__sending_socket2 = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
         self.__audio = pyaudio.PyAudio()
 
         self.__running = False

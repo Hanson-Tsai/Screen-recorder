@@ -10,10 +10,17 @@ import numpy as np
 import pickle
 import struct
 import time
-import tkinter.font as font
+import sys
 
+'''
+if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        print('no argument')
+        sys.exit()
+    default_ip_address = sys.argv[1]
+'''
 # IP mode
-default_ip_address = socket.gethostbyname(socket.gethostname())    #local-ip
+default_ip_address = 'fe80::4d53:751:964:f0af%19'#socket.gethostbyname(socket.gethostname())    #local-ip
 #default_ip_address = requests.get('https://api.ipify.org').text  #public-ip
 print("Default IP :", default_ip_address)
 
@@ -35,7 +42,7 @@ class AudioReceiver:
 
         self.__audio = pyaudio.PyAudio()
 
-        self.__server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.__server_socket = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
         self.__server_socket.bind((self.__host, self.__port))
 
         self.__block = threading.Lock()
@@ -75,7 +82,7 @@ class AudioReceiver:
     def stop_server(self):
         if self.__running:
             self.__running = False
-            closing_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            closing_connection = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
             closing_connection.connect((self.__host, self.__port))
             closing_connection.close()
             self.__block.acquire()
@@ -152,7 +159,7 @@ class StreamingServer:
         self.__running = False
         self.__quit_key = quit_key
         self.__block = threading.Lock()
-        self.__server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.__server_socket = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
         self.__init_socket()
 
     def __init_socket(self):
@@ -197,7 +204,7 @@ class StreamingServer:
         """
         if self.__running:
             self.__running = False
-            closing_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            closing_connection = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
             closing_connection.connect((self.__host, self.__port))
             closing_connection.close()
             self.__block.acquire()

@@ -10,6 +10,7 @@ import struct
 import pyaudio
 import time
 import sys
+from PIL import Image, ImageTk
 
 '''
 if __name__ == '__main__':
@@ -20,7 +21,7 @@ if __name__ == '__main__':
 '''
 
 # IP mode
-default_ip_address = 'fe80::4d53:751:964:f0af%19'#socket.gethostbyname(socket.gethostname())    #local-ip
+default_ip_address = socket.gethostbyname(socket.gethostname())    #local-ip
 #default_ip_address = requests.get('https://api.ipify.org').text  #public-ip
 print("Default IP :", default_ip_address)
 
@@ -476,6 +477,7 @@ pad = 5
 div1 = tk.Frame(window,  width=1200 , height=200)
 div2 = tk.Frame(window,  width=1200 , height=200)
 div3 = tk.Frame(window,  width=1200 , height=200)
+div4 = tk.Frame(window,  width=1200 , height=200)
 
 window.update()
 win_size = min( window.winfo_width(), window.winfo_height())
@@ -483,8 +485,9 @@ win_size = min( window.winfo_width(), window.winfo_height())
 div1.grid(column=0, row=0, padx=pad, pady=pad)
 div2.grid(column=0, row=1, padx=pad, pady=pad)
 div3.grid(column=0, row=2, padx=pad, pady=pad)
-define_layout(window, cols=1, rows=3)
-define_layout([div1, div2, div3])
+div4.grid(column=0, row=3, padx=pad, pady=pad)
+define_layout(window, cols=1, rows=4)
+define_layout([div1, div2, div3, div4])
 
 label_streamer_ip = tk.Label(div1, text='Streamer IP:')
 text_streamer_ip = tk.Text(div1, height=1)
@@ -504,6 +507,13 @@ btn_audio = tk.Button(div3, text="Audio Stream", width=30, command=start_audio_s
 btn_camera.grid(column=0, row=0, sticky=align_mode)
 btn_screen.grid(column=1, row=0, sticky=align_mode)
 btn_audio.grid(column=2, row=0, sticky=align_mode)
+
+img = Image.open('./free5gc.png')
+img = img.resize( (img.width // 3, img.height // 3) )
+imgTk =  ImageTk.PhotoImage(img)
+lbl_2 = tk.Label(div4, image=imgTk)
+lbl_2.image = imgTk
+lbl_2.grid(column=0, row=0) 
 
 
 window.mainloop()

@@ -11,6 +11,7 @@ import pickle
 import struct
 import time
 import sys
+from PIL import Image, ImageTk
 
 '''
 if __name__ == '__main__':
@@ -20,7 +21,7 @@ if __name__ == '__main__':
     default_ip_address = sys.argv[1]
 '''
 # IP mode
-default_ip_address = '192.168.10.190'#socket.gethostbyname(socket.gethostname())    #local-ip
+default_ip_address = socket.gethostbyname(socket.gethostname())    #local-ip
 #default_ip_address = requests.get('https://api.ipify.org').text  #public-ip
 print("Default IP :", default_ip_address)
 
@@ -342,15 +343,44 @@ def start_listening():
     t4.start()
     #t5.start()
 
+def define_layout(obj, cols=1, rows=1):
+    
+    def method(trg, col, row):
+        
+        for c in range(cols):    
+            trg.columnconfigure(c, weight=1)
+        for r in range(rows):
+            trg.rowconfigure(r, weight=1)
+
+    if type(obj)==list:        
+        [ method(trg, cols, rows) for trg in obj ]
+    else:
+        trg = obj
+        method(trg, cols, rows)
 
 # GUI
 window = tk.Tk()
 window.title("觀眾場地")
-window.geometry('300x200')
+pad = 5
 
-btn_listen = tk.Button(window, text="Start Listening", width=50, command=start_listening)
-btn_listen.pack(anchor=tk.CENTER, expand=True)
+div1 = tk.Frame(window,  width=800 , height=200)
+div2 = tk.Frame(window,  width=800 , height=200)
+window.update()
+win_size = min( window.winfo_width(), window.winfo_height())
 
+div1.grid(column=0, row=0, padx=pad, pady=pad)
+div2.grid(column=0, row=1, padx=pad, pady=pad)
+define_layout(window, cols=1, rows=2)
+define_layout([div1, div2])
+
+btn_listen = tk.Button(div1, text="Start Listening", width=35, command=start_listening)
+btn_listen.grid(column=0, row=0)
+img = Image.open('./free5gc.png')
+img = img.resize( (img.width // 3, img.height // 3) )
+imgTk =  ImageTk.PhotoImage(img)
+lbl_2 = tk.Label(div2, image=imgTk)
+lbl_2.image = imgTk
+lbl_2.grid(column=0, row=0) 
 window.mainloop()
 
 
